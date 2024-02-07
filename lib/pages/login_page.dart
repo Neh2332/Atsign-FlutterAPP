@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:newapp/components/my_text_field.dart';
+import 'package:newapp/components/uploadkey.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -13,7 +14,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center( // This centers its child
+        child: Center(
+          // This centers its child
           child: Column(
             children: <Widget>[
               // logo
@@ -33,29 +35,19 @@ class _LoginPageState extends State<LoginPage> {
               ),
 
               //Atsign textfield
-              MyTextField(
-                controller: TextEditingController(),
-                hintText: 'Enter your Atsign',
-
-
-              ),
-
-              //uploadkey button
+           
+              //uploadkey.dart button
               ElevatedButton(
                 onPressed: () {
-                  //navigate to the upload key page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => UploadKey()),
+                  );
                 },
                 child: const Text('Upload Key'),
               ),
 
-
-              //sign in button
-              ElevatedButton(
-                onPressed: () {
-                  //navigate to the chat page
-                },
-                child: const Text('Sign in'),
-              ),
+              //sign in butto
 
               //dont have an Atsign? Sign up
             ],
