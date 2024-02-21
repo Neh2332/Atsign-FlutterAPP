@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:newapp/components/my_text_field.dart';
+import 'package:newapp/components/backendservice.dart'; // Import your backend service
+import 'package:permission_handler/permission_handler.dart'; // Import permission handler
 
 class UploadKey extends StatefulWidget {
   @override
@@ -9,14 +11,14 @@ class UploadKey extends StatefulWidget {
 
 class _UploadKeyState extends State<UploadKey> {
   String? _fileName;
-  final TextEditingController _atsignController = TextEditingController(); // Add this line
+  final TextEditingController _atsignController = TextEditingController();
 
   Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-    if(result != null) {
+    if (result != null) {
       setState(() {
-        _fileName = result.files.single.name;
+        _fileName = result.files.single.path; // Use .path instead of .name
       });
     } else {
       // User canceled the picker
@@ -29,6 +31,13 @@ class _UploadKeyState extends State<UploadKey> {
     });
   }
 
+  Future<void> requestStoragePermission() async {
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +48,7 @@ class _UploadKeyState extends State<UploadKey> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            MyTextField( // Replace TextField with MyTextField
+            MyTextField(
               controller: _atsignController,
               hintText: 'Enter your @sign',
             ),
@@ -55,7 +64,14 @@ class _UploadKeyState extends State<UploadKey> {
               ),
             if (_fileName != null)
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  await requestStoragePermission();
+                  String? fileName = _fileName;
+                  if (fileName != null) {
+                    BackendService.validateAtsignAndKey(
+                        _atsignController.text, fileName);
+                  }
+                },
                 child: Text('Sign In'),
               ),
           ],
